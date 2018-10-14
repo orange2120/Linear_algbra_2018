@@ -40,33 +40,25 @@ def has_cycle(sets):
 
     minor_one_list = list() # List to store -1 component position
 
-    print('MATRIX=' ,end="")
+    '''print('MATRIX=' ,end="")
     print(len(sets),end="")
     print('x', end="")
     print(len(sets[0]))
-    print(sets)
+    print(sets)'''
 
     while True:
         # Find 1 as leading entry
-        
-        print(range(len(sets)-1),end="")
-        print('x', end="")
-        print(range(len(sets[0])-1))
 
         found_flag = bool(False)
-        for i in sets: # Get column size of matrix
-            for j in i: # Get row size of matrix
-        #for i in range(col_size-2): # Get column size of matrix
-        #    for j in range(len(sets)-1): # Get row size of matrix
-                if sets[i][j] == 1: # Record current leading entry position
+
+        for i in range(col_size): # Get column size of matrix
+            for j in range(len(sets)): # Get row size of matrix
+                if sets[j][i] == 1: # Record current leading entry position
                     found_flag = True
                     break
             if found_flag:
-                print(j, end="")
-                print(',', end="")
-                print(i)
-                cursor_col = j 
-                cursor_row = i
+                cursor_col = i 
+                cursor_row = j
                 break
 
         curr_row_size = len(sets) # Record current row size
@@ -81,14 +73,9 @@ def has_cycle(sets):
             #        row   colum
             if sets[m][cursor_col] == -1: # Once value is -1, add () to the row
                 minor_one_list.append(m)
-                '''print('Found -1 in <', end="")
-                print(cursor_x, end="")
-                print(',', end="")
-                print(m, end="")
-                print('>')'''
         
-        print('-1 list:', end="")
-        print(minor_one_list)
+        '''print('-1 list:', end="")
+        print(minor_one_list)'''
 
         for m in minor_one_list:
             sets.append(combine_row(sets[cursor_row], sets[m]))
@@ -98,15 +85,14 @@ def has_cycle(sets):
         
         sets.pop(cursor_row)
 
-        print(sets)
-
+        #print(sets)
+        
         if len(minor_one_list) == 0:
-            print('---------------')
+            
             return False
         else:
             minor_one_list.clear() # Clear the list for further use
 
-            print('---------------')
 
     # return True if the graph has cycle; return False if not
 
@@ -117,13 +103,16 @@ def main():
 
     test_list = [[[0,1,-1,0],[1,-1,0,0],[-1,0,1,0],[0,-1,0,1]],[[-1,1,0,0],[-1,0,0,1],[0,-1,1,0],[0,-1,0,1]]]
     test_list2 = [[[0, 0, -1, 1, 0, 0],[0, 1, 0, 0, -1, 0],[0 ,0 ,0 ,-1, 0 ,1],[0 ,0, 1,0, 0,-1],[-1, 1, 0, 0, 0, 0]],[[0, 0, -1, 1, 0, 0],[0, 1, 0, 0, -1, 0],[0 ,0 ,0 ,-1, 0 ,1],[0 ,0, 1,0, 0,-1],[-1, 1, 0, 0, 0, 0]]]
+    test_list3 = [[[-1, 0, 1, 0], [1, -1, 0, 0], [0, 1, -1, 0], [0, 1, 0, -1]],[[-1, 0, 1, 0], [1, -1, 0, 0], [0, 1, -1, 0], [0, 1, 0, -1]]]
+    test_list4 = [[[0, 1, -1, 0], [1, -1, 0, 0], [-1, 0, 1, 0], [0, -1, 0, 1]],[[0, 1, -1, 0], [1, -1, 0, 0], [-1, 0, 1, 0], [0, -1, 0, 1]]]
+    test_list5 = [[[-1,0,1,0],[1,-1,0,0],[0,1,-1,0],[0,1,0,-1]],[[-1,0,1,0],[1,-1,0,0],[0,1,-1,0],[0,1,0,-1]]]
 
     if len(sys.argv) <= 1:
         p1_list = get_p1('r07')
     else:
         p1_list = get_p1(sys.argv[1])
     for sets in p1_list:
-    #for sets in test_list2:
+    #for sets in test_list5:
     #for sets in test_list:
         '''
           HINT: You can `print(sets)` to show what the matrix looks like
@@ -141,8 +130,10 @@ def main():
 
         if has_cycle(sets):
             print('Yes')
+            #print('---------------')
         else:
             print('No')
+            #print('---------------')
 
 if __name__ == '__main__':
     main()

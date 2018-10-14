@@ -26,7 +26,6 @@ def has_cycle(sets):
     b = a
 
     while n > 0:
-        #b = b.dot(a)
         b = np.dot(b,a)
 
         '''print(n)
@@ -39,8 +38,6 @@ def has_cycle(sets):
 
     diag_arr = np.diag(b)
     diag_arr = diag_arr[(diag_arr != 0)]
-    '''print('DGS=',end="")
-    print(diag_arr.size)'''
     if diag_arr.size > 0:
         return True
     
