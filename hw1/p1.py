@@ -2,118 +2,46 @@ import sys
 import numpy as np
 from graph_gen import *
 
-# Check if the row is all zero or not
-def isZeroRow(row):
-    for k in row:
-        if row[k] != 0:
-            return False
-    return True
-
-# Add a row to another row
-# Using : add_row(row_1, row_2)
-# row_1 : source row, row_2 : target row to be added  
-def add_row(row_in, row_out):
-    for i in range(len(row_in)):
-        row_out[i] += row_in[i]
-
-# Add two rows to another row
-# Using : add_row(row_1, row_2)
-# row_1, row_2 : source row  
-def combine_row(row_in1, row_in2):
-    row_out = [0 for col in range(len(row_in1))]
-    for i in range(len(row_in1)):
-        row_out[i] = row_in1[i]+row_in2[i]
-    return row_out
-
-# 1     2     3 < row_size = 2
-# 4     5     6 < 
-# ^     ^     ^
-#    col_size = 3
-#    -> 2 x 3 matrix
-# Define : sets[row][column]
-#               ( y ,  x )
 def has_cycle(sets):
-    #np1 = np.array(sets)
-
-    # ***Column size will not change, so let it be fixed***
-    col_size = len(sets[0])
-
-    minor_one_list = list() # List to store -1 component position
-
-    '''print('MATRIX=' ,end="")
-    print(len(sets),end="")
-    print('x', end="")
-    print(len(sets[0]))
-    print(sets)'''
-
-    while True:
-        # Find 1 as leading entry
-
-        found_flag = bool(False)
-
-        for i in range(col_size): # Get column size of matrix
-            for j in range(len(sets)): # Get row size of matrix
-                if sets[j][i] == 1: # Record current leading entry position
-                    found_flag = True
-                    break
-            if found_flag:
-                cursor_col = i 
-                cursor_row = j
-                break
-
-        curr_row_size = len(sets) # Record current row size
-        '''
-        print('Found 1 in (', end="")
-        print(cursor_x, end="")
-        print(',', end="")
-        print(cursor_y, end="")
-        print(')')'''
-
-        for m in range(curr_row_size): # Search rows for within value is -1
-            #        row   colum
-            if sets[m][cursor_col] == -1: # Once value is -1, add () to the row
-                minor_one_list.append(m)
-        
-        '''print('-1 list:', end="")
-        print(minor_one_list)'''
-
-        for m in minor_one_list:
-            sets.append(combine_row(sets[cursor_row], sets[m]))
-
-            if isZeroRow(sets[-1]):
-                return True
-        
-        sets.pop(cursor_row)
-
-        #print(sets)
-        
-        if len(minor_one_list) == 0:
-            
-            return False
-        else:
-            minor_one_list.clear() # Clear the list for further use
-
-
     # return True if the graph has cycle; return False if not
+    arr = np.array(sets)
 
+    for j in range(arr.shape[1]): # Search in column
+        for i in range(arr.shape[0]): # Search in row
+            if arr[i,j] == 1:
+                col_mark = j
+                row_mark = i
+                one_flag = True
+                has_min_one = False
+
+                for k in range(arr.shape[0]):
+                    if arr[k,col_mark] == -1:
+                        has_min_one = True
+                        arr = np.vstack([arr,arr[k]])
+                        b = arr[row_mark]
+                        arr[-1] = arr[-1]+b
+
+                if has_min_one:
+                    arr = np.delete(arr,(row_mark),axis=0)
+
+                for m in range(arr.shape[0]): # Search in column
+                    All_zero = True
+                    for n in range(arr.shape[1]): # Search in row
+                        if arr[m,n] != 0:
+                            All_zero = False
+                            break
+                    if All_zero:
+                        return True
     return False
 
 def main():
     p1_list = list()
-
-    test_list = [[[0,1,-1,0],[1,-1,0,0],[-1,0,1,0],[0,-1,0,1]],[[-1,1,0,0],[-1,0,0,1],[0,-1,1,0],[0,-1,0,1]]]
-    test_list2 = [[[0, 0, -1, 1, 0, 0],[0, 1, 0, 0, -1, 0],[0 ,0 ,0 ,-1, 0 ,1],[0 ,0, 1,0, 0,-1],[-1, 1, 0, 0, 0, 0]],[[0, 0, -1, 1, 0, 0],[0, 1, 0, 0, -1, 0],[0 ,0 ,0 ,-1, 0 ,1],[0 ,0, 1,0, 0,-1],[-1, 1, 0, 0, 0, 0]]]
-    test_list3 = [[[-1, 0, 1, 0], [1, -1, 0, 0], [0, 1, -1, 0], [0, 1, 0, -1]],[[-1, 0, 1, 0], [1, -1, 0, 0], [0, 1, -1, 0], [0, 1, 0, -1]]]
-    test_list4 = [[[0, 1, -1, 0], [1, -1, 0, 0], [-1, 0, 1, 0], [0, -1, 0, 1]],[[0, 1, -1, 0], [1, -1, 0, 0], [-1, 0, 1, 0], [0, -1, 0, 1]]]
-    test_list5 = [[[-1,0,1,0],[1,-1,0,0],[0,1,-1,0],[0,1,0,-1]],[[-1,0,1,0],[1,-1,0,0],[0,1,-1,0],[0,1,0,-1]]]
-
     if len(sys.argv) <= 1:
         p1_list = get_p1('r07')
     else:
         p1_list = get_p1(sys.argv[1])
+
     for sets in p1_list:
-    #for sets in test_list5:
-    #for sets in test_list:
         '''
           HINT: You can `print(sets)` to show what the matrix looks like
             If we have a directed graph with 2->3 4->1 3->5 5->2 0->1
@@ -125,15 +53,10 @@ def main():
                 4 -1  1  0  0  0  0
             The size of the matrix is (5,6)
         '''
-
-        #print(sets)
-
         if has_cycle(sets):
             print('Yes')
-            #print('---------------')
         else:
             print('No')
-            #print('---------------')
 
 if __name__ == '__main__':
     main()
