@@ -11,7 +11,6 @@ def has_cycle(sets):
             if arr[i,j] == 1:
                 col_mark = j
                 row_mark = i
-                one_flag = True
                 has_min_one = False
 
                 for k in range(arr.shape[0]):
