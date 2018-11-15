@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 # n = 1000, k = 5
 
 n = 1000
-threshold = 0.1
-max_sample_range = 70
+threshold = 5
+max_sample_range = 6
 
 def plot_wave(x, path = './wave.png'):
     plt.gcf().clear()
@@ -34,7 +34,8 @@ def CosineTrans(x, B):
 
 def InvCosineTrans(a, B):
     # implement inverse cosine transform
-    return np.matmul(B,a)
+    #return np.matmul(B,a)
+    return np.matmul(np.transpose(a),B)
 
 """
 def gen_basis(N):
@@ -75,36 +76,40 @@ def main():
     peaks = np.array([], dtype=int)
     peak_filted = np.where(a > threshold)
     print(peak_filted)
+
     # Get appropriate interval of frequency
-    first = 0
-    max_peak = 0
-    
     for i in range(len(peak_filted[0])):
-        if peak_filted[0][i] > max_peak:
-            
-            max_peak = peak_filted[0][i]
-        if peak_filted[0][i] < max_peak:
-            peaks = np.append(peaks, peak_filted[0][i])
-            max_peak = 0
+        peaks = np.append(peaks, peak_filted[0][i])
+    k = 0
+    while k < len(peaks):
+        if peaks[k]-peaks[k-1] <= 1 and k > 1:
+            peaks = np.delete(peaks, k-1)
+        k = k + 1
+    print(peaks)
 
-    for k in range(len(peak_filted[0])):
-        if (peak_filted[0][k]-first) > max_sample_range or k == len(peak_filted[0])-1:
-            peak_rng = np.row_stack((peak_rng, np.array([first, (peak_filted[0][k-1])])))
-            first = peak_filted[0][k]
+    for i in range(len(peaks)):
+        start = peaks[i]-max_sample_range
+        end = peaks[i]+max_sample_range
+        if start < 0:
+            start = 0
+        if end > peaks[len(peaks)-1]:
+            end = peaks[len(peaks)-1]
+        peak_rng = np.row_stack((peak_rng, np.array([start, end])))
 
-    print(peak_rng)     
+    print(peak_rng)
 
     f1 = InvCosineTrans(gen_basis(a, peak_rng[0]), B)
-    #f1 = InvCosineTrans(gen_basis(a, [0,50]), B)
-    #f3 = InvCosineTrans(gen_basis(a, peak_rng[1]), B)
-    #f3 = InvCosineTrans(gen_basis(a, [190,210]), B)
-    f3 = InvCosineTrans(gen_basis(a, [363,375]), B)
+    #f1 = InvCosineTrans(gen_basis(a, [30,50]), B)
+    f3 = InvCosineTrans(gen_basis(a, peak_rng[2]), B)
+    #f3 = InvCosineTrans(gen_basis(a, [220,225]), B)
+    #f3 = InvCosineTrans(gen_basis(a, [363,375]), B)
 
     np.savetxt('f1.txt', f1)
     np.savetxt('f3.txt', f3)
 
     plot_wave(f1, 'f1.png')
     plot_wave(f3, 'f3.png')
+
 
 if __name__ == '__main__':
     main()

@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 # n = 1000, k = 5
 
 n = 1000
+threshold = 5
+max_sample_range = 6
 
 def plot_wave(x, path = './wave.png'):
     plt.gcf().clear()
@@ -59,11 +61,36 @@ def main():
     a = CosineTrans(x, B)
     plot_ak(a, 'b06602037_freq.png')
 
-    f1 = InvCosineTrans(gen_basis(a, [30,40]), B)
-    f3 = InvCosineTrans(gen_basis(a, [363,375]), B)
+    peak_rng = np.ndarray(shape=(0,2), dtype=int)
+    peaks = np.array([], dtype=int)
+    peak_filted = np.where(a > threshold)
+
+    # Get appropriate interval of frequency
+    for i in range(len(peak_filted[0])):
+        peaks = np.append(peaks, peak_filted[0][i])
+    k = 0
+    while k < len(peaks):
+        if peaks[k]-peaks[k-1] <= 1 and k > 1:
+            peaks = np.delete(peaks, k-1)
+        k = k + 1
+
+    for i in range(len(peaks)):
+        start = peaks[i]-max_sample_range
+        end = peaks[i]+max_sample_range
+        if start < 0:
+            start = 0
+        if end > peaks[len(peaks)-1]:
+            end = peaks[len(peaks)-1]
+        peak_rng = np.row_stack((peak_rng, np.array([start, end])))
+
+    f1 = InvCosineTrans(gen_basis(a, peak_rng[0]), B)
+    f3 = InvCosineTrans(gen_basis(a, peak_rng[2]), B)
 
     np.savetxt('b06602037_f1.txt', f1)
     np.savetxt('b06602037_f3.txt', f3)
+
+    #plot_wave(f1, 'f1.png')
+    #plot_wave(f3, 'f3.png')
 
 if __name__ == '__main__':
     main()
