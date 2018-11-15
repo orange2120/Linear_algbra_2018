@@ -59,7 +59,7 @@ def main():
     a = CosineTrans(x, B)
     plot_ak(a, 'b06602037_freq.png')
 
-    f1 = InvCosineTrans(gen_basis(a, [0,69]), B)
+    f1 = InvCosineTrans(gen_basis(a, [30,40]), B)
     f3 = InvCosineTrans(gen_basis(a, [363,375]), B)
 
     np.savetxt('b06602037_f1.txt', f1)
