@@ -8,13 +8,13 @@ def load(fname):
     ret = {}
     for l in f:
         l = l.split('\n')[0].split(',')
-        i = l[0]
+        i = int(l[0])
         ret[i] = {}
         for j in range(n):
             if str(j) in l[1:]:
-                ret[i][str(j)] = 1
+                ret[i][j] = 1
             else:
-                ret[i][str(j)] = 0
+                ret[i][j] = 0
     ret = pd.DataFrame(ret).values
     return ret
 
