@@ -67,6 +67,7 @@ class Linear_Regression(object):
         return predict_Y
 def MSE(predict_Y, real_Y):
     #TODO :mean square error
+    #for i in 
     # loss = ?
     return loss
 
@@ -74,6 +75,9 @@ def MSE(predict_Y, real_Y):
 if __name__ == '__main__' :
     N = 6
     train_X, train_Y = read_TrainData('train.csv', N=N)
+    # train_X (5688, 109)
+    # train_Y (5688, 1)
+
     model = Linear_Regression()
     model.train(train_X, train_Y)
     test_X, test_Y = read_TestData('test.csv', N=N)
