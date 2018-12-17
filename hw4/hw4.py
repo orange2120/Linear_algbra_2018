@@ -28,7 +28,7 @@ def get_tran(g):
         cnt = np.count_nonzero(g[i])
         for j in range(n):
             if g[i][j] == 1.0:
-                tm[j][i] = 1/cnt
+                tm[j][i] = 1.0/cnt
         cnt = 0 # reset counter
     return tm
 
@@ -41,12 +41,13 @@ def cal_rank(t, d = 0.85, max_iterations = 1000, alpha = 0.001):
 
     for i in range(n):
             r_zero[i] = 1/n # fill the zero column
+    r_zero = (1-d)*r_zero
     
     #print(r_zero)
     #print((1-d)*r_zero)
 
     while cnt < max_iterations:
-        rn = (1-d)*r_zero + d*(np.matmul(t, r))
+        rn = r_zero + d*(np.matmul(t, r))
         if dist(rn, t) <= alpha:
             break
         r = rn

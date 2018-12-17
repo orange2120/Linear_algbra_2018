@@ -1,6 +1,10 @@
 import pandas as pd
 import numpy as np
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 attrs = ['AMB', 'CH4', 'CO', 'NMHC', 'NO', 'NO2',
         'NOx', 'O3', 'PM10', 'PM2.5', 'RAINFALL', 'RH',
         'SO2', 'THC', 'WD_HR', 'WIND_DIR', 'WIND_SPEED', 'WS_HR']
@@ -59,28 +63,64 @@ class Linear_Regression(object):
         pass
     def train(self, train_X, train_Y):
         #TODO
-        #W = ?
+        W = np.dot(np.dot(np.linalg.inv(np.dot(np.transpose(train_X), train_X)), np.transpose(train_X)), train_Y)
+        #np.savetxt("W.txt", W)
         self.W = W #save W for later prediction
+
     def predict(self, test_X):
         #TODO
         #predict_Y = ...?
+        predict_Y = np.dot(test_X, self.W)
         return predict_Y
+
+    def predictTY(self, train_X):
+        return np.dot(train_X ,self.W)
+
 def MSE(predict_Y, real_Y):
     #TODO :mean square error
-    #for i in 
+    s = int(0)
+    for i in range(len(predict_Y)):
+        s += (predict_Y[i]-real_Y[i])**2
+    loss = s/len(predict_Y)
+
     # loss = ?
     return loss
 
+def plot_range(begin, end):
+    trl = []
+    tel = []
+    for i in range(begin, end):
+        print(i)
+        train_X, train_Y = read_TrainData('train.csv', N=i)
+        test_X, test_Y = read_TestData('test.csv', N=i)
+        m = Linear_Regression()
+        m.train(train_X, train_Y)
+        predict_Y = m.predict(test_X)
+        trl.append(MSE(train_Y, m.predictTY(train_X)))
+        tel.append(MSE(predict_Y, test_Y))
+    plot(trl, tel)
+
+def plot(tr_set_loss, te_set_loss, path = './plot.png'):
+    assert len(tr_set_loss) == len(te_set_loss)
+    length = len(tr_set_loss)
+    plt.plot(range(1, length+1), tr_set_loss, 'b', label='train loss')
+    plt.plot(range(1, length+1), te_set_loss, 'r', label='test loss')
+    plt.legend()
+    plt.xlabel('N')
+    plt.ylabel('MSE loss')
+    plt.savefig(path)
 
 if __name__ == '__main__' :
     N = 6
     train_X, train_Y = read_TrainData('train.csv', N=N)
     # train_X (5688, 109)
     # train_Y (5688, 1)
-
     model = Linear_Regression()
     model.train(train_X, train_Y)
     test_X, test_Y = read_TestData('test.csv', N=N)
     predict_Y = model.predict(test_X)
     test_loss = MSE(predict_Y, test_Y)
+
+    plot_range(1,48)
+
     print(test_loss)
