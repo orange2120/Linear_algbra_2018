@@ -20,7 +20,10 @@ def save_image(imArr, fpath='output.jpg'):
         imArr: 2d or 3d numpy array, *** it must be np.uint8 and range from [0, 255]. ***
         fpath: string, the path to save imgArr.
     """
+
     im = Image.fromarray(imArr)
+    if im.mode != 'RGB':
+        im = im.convert('RGB')
     im.save(fpath)
     
 def plot_curve(k, err, fpath='test/curve.png', show=False):
@@ -72,5 +75,31 @@ def svd_compress(imArr, K=50, ch = 0):
     imArr_compressed[:, :, ch] -= imArr_compressed[:, :, ch].min()
     imArr_compressed[:, :, ch] /= imArr_compressed[:, :, ch].max()
     imArr_compressed[:, :, ch] *= 255
+    # Return uint8 because save_image needs input of type uint8
+    return imArr_compressed.astype(np.uint8)
+
+def svd_compress_single(imArr, K = 0, ch = 0):
+    """Compress image array using SVD decomposition.
+    Arg:
+        imArr: numpy array with shape (height, width, 3).
+        ch: select the channel for image (0 = R, 1 = G, 2 = B)
+    Return:
+        Compressed imArr: numpy array.
+    """
+
+    imArr_compressed = np.zeros((imArr.shape[0],imArr.shape[1]))
+    
+
+    u, s, vh = np.linalg.svd(imArr[:, :, ch], full_matrices=False)
+
+    new_rank = np.zeros(s.shape)
+    new_rank[K - 1] = s[K - 1]
+
+    imArr_compressed = np.dot(u * new_rank, vh)
+
+    # Make imArr_compressed range from 0 to 255
+    imArr_compressed[:, :] -= imArr_compressed[:, :].min()
+    imArr_compressed[:, :] /= imArr_compressed[:, :].max()
+    imArr_compressed[:, :] *= 255
     # Return uint8 because save_image needs input of type uint8
     return imArr_compressed.astype(np.uint8)
