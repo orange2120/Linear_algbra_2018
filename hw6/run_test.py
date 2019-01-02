@@ -6,15 +6,20 @@ img_path = 'img/vegetable_english.jpg'
 imArr = u.load_image(img_path)
 
 def main():
-    #ks = [1, 5, 50, 150, 400, 1050, 1289]
-    ks = [1, 2, 3, 4, 5]
+    ks = [1, 5, 50, 150, 400, 1050, 1289]
+    #ks = [1, 2, 3, 4, 5]
     err = []
-    channel = 1
+    channel = 0
+
+    print('origin ' , end='')
+    u.print_rank(imArr[:, :, channel])
+
     for k in ks: 
         print("Perform SVD for k=%d ..." % k, end='\r\n')
         imArr_compressed = svd_compress(imArr, K=k, ch=channel)
         err += [u.approx_error(imArr, imArr_compressed)]
         u.save_image(imArr_compressed, 'test/result_{}_{}.jpg'.format(channel, k))
+        u.print_rank(imArr_compressed[:, :, channel])
 
     #plt.imshow(imArr_compressed)
     plt.show()

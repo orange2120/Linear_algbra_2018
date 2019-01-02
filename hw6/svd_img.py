@@ -103,3 +103,7 @@ def svd_compress_single(imArr, K = 0, ch = 0):
     imArr_compressed[:, :] *= 255
     # Return uint8 because save_image needs input of type uint8
     return imArr_compressed.astype(np.uint8)
+
+def print_rank(imArr):
+    rank = np.linalg.matrix_rank(imArr)
+    print('Rank= {}'.format(rank))

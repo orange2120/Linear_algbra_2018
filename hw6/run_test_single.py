@@ -24,7 +24,7 @@ def main():
         err += [u.approx_error(imArr[:, :, channel], imArr_compressed)]
         u.save_image(imArr_compressed, 'test/result_{}_{}.jpg'.format(channel, k))
     
-    rank_img_sum /= len(ks)
+    #rank_img_sum /= len(ks)
     rank_img_sum.astype(np.uint8)
     rank_img_sum[:, :] -= rank_img_sum[:, :].min()
     rank_img_sum[:, :] /= rank_img_sum[:, :].max()
